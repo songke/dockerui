@@ -155,13 +155,10 @@ function SettingsController($scope, System, Docker, Settings, Messages) {
 function ContainerController($scope, $routeParams, $location, Container, Messages, ViewSpinner) {
     $scope.changes = [];
 
-    $scope.start = function(){
-        Container.start({id: $routeParams.id}, function(d) {
-            Messages.send("Container started", $routeParams.id);
-        }, function(e) {
-            Messages.error("Failure", "Container failed to start." + e.data);
-        });
+    $scope.start = function() {
+        $('#start-modal').modal('show');
     };
+
 
     $scope.stop = function() {
         Container.stop({id: $routeParams.id}, function(d) {
@@ -209,6 +206,37 @@ function ContainerController($scope, $routeParams, $location, Container, Message
     });
 
    $scope.getChanges();
+}
+
+
+function StartContainerController($scope, $routeParams, $location, Container, Messages) {
+    $scope.template = 'partials/startcontainer.html';
+    $scope.config = {
+        binds: '',
+        links: '',
+        dns: '',
+        privileged: '',
+        portbindings: '',        
+    };
+    $scope.bindsPlaceholder = '["/tmp:/tmp"]';
+
+    $scope.start = function() {
+        var id = $routeParams.id;
+
+        Container.start({
+                id: id,
+                Binds: $scope.config.binds,
+                Links: $scope.config.links,
+                Dns: $scope.config.dns,
+                Privileged: $scope.config.privileged,
+                PortBindings: $scope.config.portbindings
+            },function(d) {
+                Messages.send("Container started", id);
+                $('#start-modal').modal('hide');
+            }, function(e) {
+                failedRequestHandler(e, Messages);
+        });
+    };
 }
 
 // Controller for the list of containers
@@ -392,15 +420,19 @@ function ImageController($scope, $q, $routeParams, $location, Image, Container, 
     $scope.getHistory();
 }
 
-function StartContainerController($scope, $routeParams, $location, Container, Messages) {
-    $scope.template = 'partials/startcontainer.html';
+function CreateContainerController($scope, $routeParams, $location, Container, Messages) {
+    $scope.template = 'partials/createcontainer.html';
     $scope.config = {
         name: '',
         memory: 0,
         memorySwap: 0,
         env: '',
         commands: '',
-        volumesFrom: ''
+        volumesFrom: '',
+        user: 'root',
+        tty: 'false',
+        openstdin: 'false',
+        
     };
     $scope.commandPlaceholder = '["/bin/echo", "Hello world"]';
 
@@ -420,7 +452,11 @@ function StartContainerController($scope, $routeParams, $location, Container, Me
                 Memory: $scope.config.memory,
                 MemorySwap: $scope.config.memorySwap,
                 Cmd: cmds,
-                VolumesFrom: $scope.config.volumesFrom
+                VolumesFrom: $scope.config.volumesFrom,
+                Tty: $scope.config.tty,
+                User: $scope.config.user,
+                Env: $scope.config.env,
+                OpenStdin: $scope.config.openstdin
             }, function(d) {
                 if (d.Id) {
                     ctor.start({id: d.Id}, function(cd) {

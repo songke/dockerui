@@ -1,32 +1,33 @@
-<div id="create-modal" class="modal hide fade">
+<div id="start-modal" class="modal hide fade">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Create Container</h3>
+    <h3>Start Container</h3>
   </div>
   <div class="modal-body">
     <form>
         <fieldset>
-            <legend>Start container from Image</legend>
+            <legend>Start container</legend>
 
-            <label>Cmd:</label>
-            <input type="text" placeholder="{{ commandPlaceholder }}" ng-model="config.commands"/>
-            <small>Input commands as an array</small>
+            <label>Binds:</label>
+            <input type="text" placeholder="{{ bindsPlaceholder }}" ng-model="config.binds"/>
 
-            <label>Name:</label>
-            <input type="text" ng-model="config.name"/>
+            <label>Links:</label>
+            <input type="text" ng-model="config.links"/>
 
-            <label>Memory:</label>
-            <input type="number" ng-model="config.memory"/>
+            <label>Dns:</label>
+            <input type="text" ng-model="config.dns"/>
 
-            <label>Memory Swap:</label>
-            <input type="number" ng-model="config.memorySwap"/>
+            <label>Privileged:</label>
+            <input type="text" ng-model="config.privileged"/>
 
-            <label>Volumes From:</label>
-            <input type="text" ng-model="config.volumesFrom"/>
+            <label>PortBindings:</label>
+            <input type="text" ng-model="config.portbindings"/>
+
         </fieldset>
     </form>
   </div>
   <div class="modal-footer">
-    <a href="" class="btn btn-primary" ng-click="create()">Create</a>
+    <a href="" class="btn btn-primary" ng-click="start()">Start</a>
   </div>
 </div>
+
